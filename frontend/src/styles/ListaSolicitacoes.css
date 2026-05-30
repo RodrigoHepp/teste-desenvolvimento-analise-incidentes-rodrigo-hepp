@@ -6,7 +6,7 @@
 .lista-container h2 {
   margin-bottom: 2rem;
   font-size: 1.75rem;
-  color: var(--color-dark);
+  color: var(--color-dark, #1e293b);
 }
 
 .lista-header {
@@ -18,16 +18,18 @@
 
 .filtro-select {
   padding: 0.75rem 1rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 6px;
   font-size: 1rem;
   min-width: 200px;
+  background: var(--color-white, #ffffff);
+  color: var(--color-dark, #1e293b);
 }
 
 .vazio {
   text-align: center;
   padding: 2rem;
-  color: var(--color-secondary);
+  color: #64748b;
   font-size: 1.1rem;
 }
 
@@ -37,18 +39,20 @@
   gap: 1.5rem;
 }
 
+/* 🔥 CARD AJUSTADO (principal correção de contraste) */
 .solicitacao-card {
-  background: white;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  background: var(--color-white, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   transition: all 0.2s ease;
+  color: var(--color-dark, #1e293b);
 }
 
 .solicitacao-card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
 
 .card-header {
@@ -62,11 +66,19 @@
 .card-header h3 {
   margin: 0;
   font-size: 1.25rem;
+  color: var(--color-dark, #1e293b);
 }
 
+.solicitacao-card p {
+  margin: 0.75rem 0;
+  font-size: 0.95rem;
+  color: #334155; /* melhor contraste que o título */
+}
+
+/* BADGES */
 .badge {
   padding: 0.25rem 0.75rem;
-  border-radius: 20px;
+  border-radius: 999px;
   font-size: 0.875rem;
   font-weight: 500;
   white-space: nowrap;
@@ -92,12 +104,7 @@
   color: #7f1d1d;
 }
 
-.solicitacao-card p {
-  margin: 0.75rem 0;
-  font-size: 0.95rem;
-  color: var(--color-secondary);
-}
-
+/* AÇÕES */
 .card-actions {
   display: flex;
   gap: 0.5rem;
