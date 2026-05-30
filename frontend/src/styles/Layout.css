@@ -33,3 +33,32 @@
   text-align: center;
   margin-top: 2rem;
 }
+
+/* Ensure main welcome text is visible regardless of global variable conflicts */
+.main-content .welcome-section h2 {
+  color: var(--color-dark, #1e293b);
+}
+
+.main-content .welcome-section p {
+  color: var(--color-secondary, #64748b);
+}
+
+.main-nav {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  align-items: center;
+}
+
+.main-nav a {
+  color: rgba(255,255,255,0.95);
+  text-decoration: none;
+  padding: 6px 10px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.main-nav a:hover {
+  background: rgba(255,255,255,0.12);
+}
