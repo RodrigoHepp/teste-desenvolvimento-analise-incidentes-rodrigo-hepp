@@ -143,7 +143,7 @@ class SolicitacaoProdutoServiceTest {
         SolicitacaoProdutoResponse response = service.atualizar(1L, atualizarRequest);
 
         assertNotNull(response);
-        assertEquals("Notebook", response.getNomeProduto());
+        assertEquals("Monitor", response.getNomeProduto());
 
         verify(repository, times(1)).findById(1L);
         verify(repository, times(1)).save(any(SolicitacaoProduto.class));
