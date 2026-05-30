@@ -10,10 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -23,21 +22,24 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@DisplayName("SolicitacaoProdutoController Integration Tests")
+@WebMvcTest(SolicitacaoProdutoController.class)
+@DisplayName("SolicitacaoProdutoController Tests")
 class SolicitacaoProdutoControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+   
+    private ObjectMapper objectMapper = new ObjectMapper();
 
-    @MockBean
+    @MockitoBean
     private SolicitacaoProdutoService service;
 
     private SolicitacaoProdutoResponse solicitacaoResponse;
@@ -45,6 +47,8 @@ class SolicitacaoProdutoControllerTest {
 
     @BeforeEach
     void setup() {
+        LocalDateTime agora = LocalDateTime.of(2026, 5, 30, 12, 0);
+
         solicitacaoResponse = new SolicitacaoProdutoResponse();
         solicitacaoResponse.setId(1L);
         solicitacaoResponse.setNomeProduto("Notebook");
@@ -53,8 +57,8 @@ class SolicitacaoProdutoControllerTest {
         solicitacaoResponse.setPrioridade(PrioridadeSolicitacao.ALTA);
         solicitacaoResponse.setStatus(StatusSolicitacao.ABERTA);
         solicitacaoResponse.setObservacao("Urgente");
-        solicitacaoResponse.setDataCriacao(LocalDateTime.now());
-        solicitacaoResponse.setDataAtualizacao(LocalDateTime.now());
+        solicitacaoResponse.setDataCriacao(agora);
+        solicitacaoResponse.setDataAtualizacao(agora);
 
         criarRequest = new CriarSolicitacaoProdutoRequest(
                 "Notebook",
@@ -71,7 +75,7 @@ class SolicitacaoProdutoControllerTest {
         when(service.listar()).thenReturn(List.of(solicitacaoResponse));
 
         mockMvc.perform(get("/api/solicitacoes")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id").value(1))
@@ -84,7 +88,7 @@ class SolicitacaoProdutoControllerTest {
         when(service.buscarPorId(1L)).thenReturn(solicitacaoResponse);
 
         mockMvc.perform(get("/api/solicitacoes/1")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.nomeProduto").value("Notebook"))
@@ -97,8 +101,8 @@ class SolicitacaoProdutoControllerTest {
         when(service.criar(any())).thenReturn(solicitacaoResponse);
 
         mockMvc.perform(post("/api/solicitacoes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(criarRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(criarRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.nomeProduto").value("Notebook"))
@@ -110,11 +114,20 @@ class SolicitacaoProdutoControllerTest {
     void testAtualizarSolicitacao() throws Exception {
         when(service.atualizar(eq(1L), any())).thenReturn(solicitacaoResponse);
 
-        String updateJson = "{\"nomeProduto\":\"Monitor\",\"quantidade\":10,\"solicitante\":\"Maria\",\"prioridade\":\"MEDIA\",\"status\":\"EM_ANALISE\",\"observacao\":\"Atualizado\"}";
+        String updateJson = """
+                {
+                  "nomeProduto":"Monitor",
+                  "quantidade":10,
+                  "solicitante":"Maria",
+                  "prioridade":"MEDIA",
+                  "status":"EM_ANALISE",
+                  "observacao":"Atualizado"
+                }
+                """;
 
         mockMvc.perform(put("/api/solicitacoes/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(updateJson))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(updateJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1));
     }
@@ -123,7 +136,7 @@ class SolicitacaoProdutoControllerTest {
     @DisplayName("DELETE /api/solicitacoes/{id} - Deve deletar solicitação")
     void testDeletarSolicitacao() throws Exception {
         mockMvc.perform(delete("/api/solicitacoes/1")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
     }
 
@@ -134,7 +147,7 @@ class SolicitacaoProdutoControllerTest {
                 .thenReturn(List.of(solicitacaoResponse));
 
         mockMvc.perform(get("/api/solicitacoes/status/ABERTA")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].status").value("ABERTA"));
@@ -143,11 +156,16 @@ class SolicitacaoProdutoControllerTest {
     @Test
     @DisplayName("POST /api/solicitacoes - Deve retornar 400 para request inválida")
     void testCriarSolicitacaoInvalida() throws Exception {
-        String invalidRequest = "{\"nomeProduto\":\"\",\"quantidade\":-5}";
+        String invalidRequest = """
+                {
+                  "nomeProduto":"",
+                  "quantidade":-5
+                }
+                """;
 
         mockMvc.perform(post("/api/solicitacoes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(invalidRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidRequest))
                 .andExpect(status().isBadRequest());
     }
 }
