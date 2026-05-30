@@ -50,3 +50,46 @@ a:hover {
   margin: 0 auto;
   padding: 0 1rem;
 }
+
+/* Form basic styles */
+.cadastro-container {
+  max-width: 760px;
+  margin: 0 auto;
+  background: var(--color-white);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+.cadastro-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.cadastro-form input,
+.cadastro-form select,
+.cadastro-form textarea {
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+}
+
+.form-error {
+  color: var(--color-danger);
+  margin-bottom: 8px;
+}
+
+/* Ensure cadastro headers and labels are visible */
+.cadastro-container h2 {
+  color: var(--color-dark, #1e293b);
+  margin-bottom: 1rem;
+}
+
+.cadastro-container label {
+  color: var(--color-dark, #1e293b);
+  font-weight: 500;
+}
+
+.cadastro-form textarea { min-height: 100px; }
